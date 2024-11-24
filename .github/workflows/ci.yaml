@@ -35,7 +35,7 @@ jobs:
       # Step 4: Run tests for the service
       - name: Run tests
         working-directory: ${{ matrix.service }}
-        run: npm test
+        run: npm run test
 
       # Step 5: Run lint checks
       - name: Run lint checks
