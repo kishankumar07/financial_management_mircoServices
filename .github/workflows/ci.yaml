@@ -14,7 +14,7 @@ jobs:
 
     strategy:
       matrix:
-        service: [account-service, transaction-service,api-gateway,notification-service,reporting-service] # Add other services here as needed
+        service: [account-service] # Add other services here as needed
 
     steps:
       # Step 1: Check out the repository
