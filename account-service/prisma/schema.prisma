@@ -19,4 +19,5 @@ model Account {
   email String @unique
   balance Float @default(0.0)
   createdAt DateTime @default(now())
+  isTestData Boolean @default(false)
 }
