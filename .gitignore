@@ -1,0 +1,13 @@
+# Ignore all service-specific node_modules
+node_modules
+
+# Proto folder is shared; don't ignore it
+!proto/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Logs and debug files
+logs/
+*.log
