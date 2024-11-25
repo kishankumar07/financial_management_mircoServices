@@ -27,17 +27,29 @@ jobs:
         with:
           node-version: 18
 
-      # Step 3: Install dependencies for the service
+      # Step 3: Set environment variables
+      - name: Set environment variables
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          API_GATEWAY_URL: ${{ secrets.API_GATEWAY_URL }}
+        run: |
+          echo "DATABASE_URL=${DATABASE_URL}" >> $GITHUB_ENV
+          echo "API_GATEWAY_URL=${API_GATEWAY_URL}" >> $GITHUB_ENV
+
+      # Step 4: Install dependencies for the service
       - name: Install dependencies
         working-directory: ${{ matrix.service }}
         run: npm install
 
-      # Step 4: Run tests for the service
+      # Step 5: Run tests for the service
       - name: Run tests
         working-directory: ${{ matrix.service }}
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          API_GATEWAY_URL: ${{ secrets.API_GATEWAY_URL }}
         run: npm run test
 
-      # Step 5: Run lint checks
+      # Step 6: Run lint checks
       - name: Run lint checks
         working-directory: ${{ matrix.service }}
         run: npm run lint
