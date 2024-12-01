@@ -73,10 +73,10 @@ services:
       - RABBITMQ_PORT=5672
       - RABBITMQ_USERNAME=guest
       - RABBITMQ_PASSWORD=guest
-      - SMTP_HOST = ${SMTP_HOST}
-      - SMTP_PORT = ${SMTP_PORT}
-      - SMTP_USER = ${SMTP_USER}
-      - SMTP_PASS = ${SMTP_PASS}
+      - SMTP_HOST=${SMTP_HOST}
+      - SMTP_PORT=${SMTP_PORT}
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASS=${SMTP_PASS}
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -99,8 +99,8 @@ services:
       - API_GATEWAY_URL=${API_GATEWAY_URL}
       - RABBITMQ_USERNAME=guest
       - RABBITMQ_PASSWORD=guest
-      - TRANSACTION_SERVICE_DATABASE_URL = ${TRANSACTION_SERVICE_DATABASE_URL}
-      - API_GATEWAY_URL = ${API_GATEWAY_URL}
+      - TRANSACTION_SERVICE_DATABASE_URL=${TRANSACTION_SERVICE_DATABASE_URL}
+    
     depends_on:
       rabbitmq:
         condition: service_healthy
