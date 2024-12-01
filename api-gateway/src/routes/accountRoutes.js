@@ -11,7 +11,7 @@ const __dirname = path.dirname(__filename);
 
 
 // Load account.proto
-const PROTO_PATH = path.join(__dirname, '../../../proto/account.proto');
+const PROTO_PATH = path.join(__dirname, '../../proto/account.proto');
 const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
   keepCase: true,
   longs: String,
@@ -23,13 +23,21 @@ const accountProto = grpc.loadPackageDefinition(packageDefinition);
 
 // gRPC client setup
 const client = new accountProto.account.AccountService(
-  'localhost:50051',
+  'account-service:50051', // Docker service name instead of localhost
   grpc.credentials.createInsecure()
 );
 
 const router = express.Router();
 
-// Route: Create Account
+
+// -----------------------------------------------------------
+/**
+ * @ DESC    Create a new user [must provide name & email] 
+ * 
+ *  POST     /accounts/
+ *  
+ *  Access   Public
+ */
 router.post('/', (req, res) => {
   const { name, email } = req.body;
   client.CreateAccount({ name, email }, (error, response) => {
@@ -40,7 +48,15 @@ router.post('/', (req, res) => {
   });
 });
 
-// Route: Get Account
+// ------------------------------------------------------------
+
+/**
+ * @ DESC    Fetch a user acc details [ id required in path params ] 
+ * 
+ *  GET     /accounts/:id
+ *  
+ *  Access   Private
+ */
 router.get('/:id', (req, res) => {
   const { id } = req.params;
   client.GetAccount({ id }, (error, response) => {
@@ -51,7 +67,15 @@ router.get('/:id', (req, res) => {
   });
 });
 
-// Route: Update Balance
+//-----------------------------------------------------------------
+
+/**
+ * @ DESC    Update balance of account using account id [ id required ] 
+ * 
+ *  PUT     /accounts/:id/balance
+ *  
+ *  Access   Private
+ */
 router.put('/:id/balance', (req, res) => {
   const { id } = req.params;
   const { amount } = req.body;

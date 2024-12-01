@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package account;
+
+// Define the gRPC Account Service
+service AccountService {
+  // Create a new account
+  rpc CreateAccount (CreateAccountRequest) returns (CreateAccountResponse);
+
+  // Get account details by ID
+  rpc GetAccount (GetAccountRequest) returns (GetAccountResponse);
+
+  // Update account balance
+  rpc UpdateBalance (UpdateBalanceRequest) returns (UpdateBalanceResponse);
+}
+
+// Messages for creating an account
+message CreateAccountRequest {
+  string name = 1;
+  string email = 2;
+}
+
+message CreateAccountResponse {
+  string id = 1;
+  string message = 2;
+}
+
+// Messages for retrieving account details
+message GetAccountRequest {
+  string id = 1;
+}
+
+message GetAccountResponse {
+  string id = 1;
+  string name = 2;
+  string email = 3;
+  double balance = 4;
+}
+
+// Messages for updating balance
+message UpdateBalanceRequest {
+  string id = 1;
+  double amount = 2;
+}
+
+message UpdateBalanceResponse {
+  string id = 1;
+  double updated_balance = 2;
+  string message = 3;
+}

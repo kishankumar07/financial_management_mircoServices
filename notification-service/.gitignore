@@ -1,8 +1,8 @@
+# Environment variables
+.env
 # Node.js dependencies
 node_modules/
 
-# Environment variables
-.env
 
 # Logs
 logs/

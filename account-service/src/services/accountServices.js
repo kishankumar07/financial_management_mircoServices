@@ -47,7 +47,7 @@ export const getAccount = async(call, callback) => {
       where: { id },
     });
 
-    if (account) {
+    if (account) { 
       callback(null, account);
     } else {
       callback({

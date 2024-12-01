@@ -9,7 +9,7 @@ const __dirname = path.dirname(__filename);
 
 
 // Load account.proto
-const PROTO_PATH = path.join(__dirname, '../../../proto/reporting.proto');
+const PROTO_PATH = path.join(__dirname, '../../proto/reporting.proto');
 const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
   keepCase: true,
   longs: String,
@@ -21,13 +21,22 @@ const reportingProto = grpc.loadPackageDefinition(packageDefinition);
 
 // gRPC client setup
 const client = new reportingProto.reporting.ReportingService(
-  'localhost:50054',
+  'reporting-service:50054',
   grpc.credentials.createInsecure()
 );
 
 const router = express.Router();
 
-//Get all the transactions of a customer
+
+//------------------------------------------------------------------------
+
+/**
+ * @ DESC    Get all transactions of a customer [must provide accountId in path params] 
+ * 
+ *  POST     /reporting/transactions/:accountId
+ *  
+ *  Access   Private
+ */
 router.get('/transactions/:accountId', (req, res) => {
       const { accountId } = req.params;
     
@@ -39,7 +48,16 @@ router.get('/transactions/:accountId', (req, res) => {
       });
     });
     
-// Get Transaction summary of a client
+
+//------------------------------------------------------------------------
+
+/**
+ * @ DESC    Get all transactions summary of a customer [must provide accountId in path params] 
+ * 
+ *  POST     /reporting/summary/:accountId
+ *  
+ *  Access   Private
+ */
     router.get('/summary/:accountId', (req, res) => {
       const { accountId } = req.params;
     

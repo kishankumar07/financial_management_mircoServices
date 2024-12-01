@@ -10,12 +10,12 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL") // Replace with your actual database URL in .env
+  url      = env("TRANSACTION_SERVICE_DATABASE_URL") 
 }
 
 model Transaction {
   id         String   @id @default(cuid())
-  accountId  String   // References the Account in account-service
+  accountId  String   
   type       String   // 'DEPOSIT' or 'WITHDRAWAL'
   amount     Float
   createdAt  DateTime @default(now())

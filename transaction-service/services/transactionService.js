@@ -2,6 +2,7 @@ import grpc from '@grpc/grpc-js';
 import { PrismaClient } from '@prisma/client'
 import { v4 as uuidv4 } from 'uuid';
 import fetch from 'node-fetch'
+import { publishTransactionMessage } from '../src/utils/rabbitMQ.publish.js';
 
 const prisma = new PrismaClient()
 
@@ -18,17 +19,30 @@ const fetchAccount = async (accountId) => {
 // ---------------------------------------------------------------------------
 
 // Helper function to update account balance
-const updateAccountBalance = async (accountId, amount) => {
-  const response = await fetch(`${API_GATEWAY_URL}/accounts/${accountId}/balance`, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ amount }),
-  });
-  if (!response.ok) {
-    throw new Error(`Failed to update balance for account ID ${accountId}`);
+// const updateAccountBalance = async (accountId, amount) => {
+//   const response = await fetch(`${API_GATEWAY_URL}/accounts/${accountId}/balance`, {
+//     method: 'PUT',
+//     headers: { 'Content-Type': 'application/json' },
+//     body: JSON.stringify({ amount }),
+//   });
+//   if (!response.ok) {
+//     throw new Error(`Failed to update balance for account ID ${accountId}`);
+//   }
+//   return response.json();
+// };
+
+// ---------------------------------------------------------------------------
+// Helper function to send notification (async using RabbitMQ)
+const sendNotification = async (email, message) => {
+  try {
+    await publishTransactionMessage('notifications', { email, message });
+    console.log('Notification message published at createTransactions.');
+  } catch (error) {
+    console.error('Failed to publish notification message at createTransactions:', error.message);
+    throw new Error('Failed to queue notification');
   }
-  return response.json();
 };
+
 
 //------------------------------------------------------------------------
 
@@ -72,26 +86,40 @@ export const createTransaction = async (call, callback) => {
      ? account.balance + amount
      : account.balance - amount;
 
-  const updatedBala =  await updateAccountBalance(accountId, newBalance);
-  console.log('this is the updated bala------',updatedBala)
+     // Step 4: Publish balance update to RabbitMQ
+     await publishTransactionMessage('balance-update', {
+      accountId,
+      newBalance,
+    });
+    console.log(`Balance update published: accountId=${accountId}, newBalance=${newBalance}`);
 
-    console.log(`Transaction created: ${JSON.stringify(transaction)}`);
-    callback(null, {
+  // const updatedBala =  await updateAccountBalance(accountId, newBalance);
+  // console.log('this is the updated bala------',updatedBala)
+
+    // Publish transaction details to RabbitMQ
+    await publishTransactionMessage('transactions', {
       id: transaction.id,
-      message: 'Transaction successfully created',
+      accountId,
+      type,
+      amount,
+      timestamp: transaction.createdAt,
     });
 
-    // Step 4: Send a notification for the transaction
-    await fetch(`${API_GATEWAY_URL}/notifications/send`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        email: account.email, 
-        message: `A ${type.toLowerCase()} of $${amount} has been made to your account.`,
-      }),
-    });
+    console.log(`Transaction created and published: ${JSON.stringify(transaction)}`);
 
-    console.log('Notification sent successfully.');
+
+   // Step 5: Send a notification for the transaction
+   const notificationMessage = `A ${type.toLowerCase()} of $${amount} has been made to your account.`;
+
+   await sendNotification(account.email, notificationMessage);
+
+   // Final response
+   callback(null, {
+     id: transaction.id,
+     message: 'Transaction successfully created',
+   });
+
+    // console.log('Notification sent successfully.');
   } catch (error) {
     console.error('Error creating transaction at createTransaction from transaction-service:', error.message);
     callback({
@@ -122,7 +150,8 @@ export const getTransaction = async (call, callback) => {
 
     callback(null, transaction);
   } catch (error) {
-    console.error(error);
+    console.error('Error fetching transaction at getTransaction method of transaction-service:', error.message);
+    
     callback({
       code: grpc.status.INTERNAL,
       message: 'Error fetching transaction',
@@ -151,7 +180,7 @@ export const listTransactions = async (call, callback) => {
 
     callback(null, { transactions });
   } catch (error) {
-    console.error(error);
+    console.error(`error at listTransactions of transaction-service:${error.message}`);
     callback({
       code: grpc.status.INTERNAL,
       message: 'Error fetching transactions',

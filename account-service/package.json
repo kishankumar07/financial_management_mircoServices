@@ -5,7 +5,7 @@
   "type": "module",
   "main": "main.js",
   "scripts": {
-    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "test": "jest",
     "lint": "eslint .",
     "dev": "nodemon src/main.js",
     "start": "node src/main.js"
@@ -17,12 +17,16 @@
     "@grpc/grpc-js": "^1.12.2",
     "@grpc/proto-loader": "^0.7.13",
     "@prisma/client": "^5.22.0",
+    "amqplib": "^0.10.5",
     "axios": "^1.7.7",
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
+    "jest-mock": "^29.7.0",
     "joi": "^17.13.3",
     "mongoose": "^8.8.2",
-    "prisma": "^5.22.0"
+    "prisma": "^5.22.0",
+    "winston": "^3.17.0",
+    "winston-daily-rotate-file": "^5.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.15.0",

@@ -1,4 +1,4 @@
-name: CI Pipeline
+name: CI/CD Pipeline
 
 on:
   push:
@@ -9,47 +9,49 @@ on:
       - main
 
 jobs:
-  build:
+  build-and-push:
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        service: [account-service] # Add other services here as needed
+    env:
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      SMTP_HOST: ${{ secrets.SMTP_HOST }}
+      SMTP_PORT: ${{ secrets.SMTP_PORT }}
+      SMTP_USER: ${{ secrets.SMTP_USER }}
+      SMTP_PASS: ${{ secrets.SMTP_PASS }}
+      ACCOUNT_SERVICE_DB_URL: ${{ secrets.ACCOUNT_SERVICE_DB_URL }}
+      TRANSACTION_SERVICE_DATABASE_URL: ${{ secrets.TRANSACTION_SERVICE_DATABASE_URL }}
+      API_GATEWAY_URL: ${{ secrets.API_GATEWAY_URL }}
 
     steps:
-      # Step 1: Check out the repository
-      - name: Checkout repository
+      - name: Checkout Repository
         uses: actions/checkout@v3
 
-      # Step 2: Set up Node.js
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v2
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
         with:
-          node-version: 18
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
-      # Step 3: Set environment variables
-      - name: Set environment variables
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          API_GATEWAY_URL: ${{ secrets.API_GATEWAY_URL }}
+      - name: Build and Push Services
         run: |
-          echo "DATABASE_URL=${DATABASE_URL}" >> $GITHUB_ENV
-          echo "API_GATEWAY_URL=${API_GATEWAY_URL}" >> $GITHUB_ENV
+          docker-compose build
+          docker-compose push
 
-      # Step 4: Install dependencies for the service
-      - name: Install dependencies
-        working-directory: ${{ matrix.service }}
-        run: npm install
+  validate-compose:
+    runs-on: ubuntu-latest
 
-      # Step 5: Run tests for the service
-      - name: Run tests
-        working-directory: ${{ matrix.service }}
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          API_GATEWAY_URL: ${{ secrets.API_GATEWAY_URL }}
-        run: npm run test
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
 
-      # Step 6: Run lint checks
-      - name: Run lint checks
-        working-directory: ${{ matrix.service }}
-        run: npm run lint
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v2
+
+      - name: Test Docker Compose Services
+        run: |
+          docker-compose up -d
+          docker-compose ps
+          docker-compose down

@@ -9,7 +9,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 
-const PROTO_PATH = path.join(__dirname, '../../../proto/notification.proto');
+const PROTO_PATH = path.join(__dirname, '../../proto/notification.proto');
 const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
   keepCase: true,
   longs: String,
@@ -21,7 +21,7 @@ const notificationProto = grpc.loadPackageDefinition(packageDefinition);
 
 // gRPC client setup
 const client = new notificationProto.notification.NotificationService(
-  'localhost:50052', // Assuming the Notification Service runs on port 50052
+  'notification-service:50052', // Assuming the Notification Service runs on port 50052
   grpc.credentials.createInsecure()
 );
 
@@ -35,7 +35,17 @@ const validateNotificationPayload = (req, res, next) => {
       next();
     };
 
-// Route: Send Notification
+
+//-------------------------------------------------------------------
+
+// ---------------- IGNORE this route at production as it was only meant for testing at developement --------------------
+/**
+ * @ DESC    Notification send for any event eg: creating a transaction ( deposit or withdrawal )
+ * 
+ *  POST     /notifications/send
+ *  
+ *  Access   Private
+ */
 router.post('/send',validateNotificationPayload, (req, res) => {
   const { email, message } = req.body;
   client.SendNotification({ email, message }, (error, response) => {

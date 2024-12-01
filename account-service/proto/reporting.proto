@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package reporting;
+
+service ReportingService {
+  // Get transactions for an account
+  rpc GetTransactions (TransactionRequest) returns (TransactionResponse);
+
+  // Get summary of transactions for an account
+  rpc GetTransactionSummary (SummaryRequest) returns (SummaryResponse);
+}
+
+message TransactionRequest {
+  string accountId = 1;
+}
+
+message TransactionResponse {
+  repeated Transaction transactions = 1;
+}
+
+message Transaction {
+  string id = 1;
+  string accountId = 2;
+  string type = 3;
+  double amount = 4;
+  string createdAt = 5;
+}
+
+message SummaryRequest {
+  string accountId = 1;
+}
+
+message SummaryResponse {
+  double totalDeposits = 1;
+  double totalWithdrawals = 2;
+  double currentBalance = 3;
+}

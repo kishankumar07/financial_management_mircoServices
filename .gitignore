@@ -11,3 +11,5 @@ Thumbs.db
 # Logs and debug files
 logs/
 *.log
+
+.env

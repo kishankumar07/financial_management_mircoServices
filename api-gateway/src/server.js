@@ -14,7 +14,7 @@ app.use('/accounts', accountRoutes);
 app.use('/notifications', notificationRoutes); 
 app.use('/transactions',transactionRoutes)
 app.use('/reporting',reportingRoutes)
-
+ 
 app.listen(PORT, () => {
   console.log(`API Gateway is running on http://localhost:${PORT}`);
 });

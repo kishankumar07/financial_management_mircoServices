@@ -1,0 +1,116 @@
+version: '3.8'
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"  # Main port for RabbitMQ
+      - "15672:15672" # RabbitMQ Management UI
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+
+  account-service:
+    build:
+      context: ./account-service
+    image: kta6161/account-service:latest  
+    container_name: account-service
+    environment:
+      - ACCOUNT_SERVICE_DB_URL=${ACCOUNT_SERVICE_DB_URL}
+      - API_GATEWAY_URL=${API_GATEWAY_URL}
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USERNAME=guest
+      - RABBITMQ_PASSWORD=guest
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    volumes:
+      - ./account-service:/app 
+      - /app/node_modules       
+      - ./account-service/prisma:/app/prisma
+    command: sh -c "npx prisma migrate dev && npm run dev"
+    ports:
+      - "50051:50051"
+
+  api-gateway:
+    build:
+      context: ./api-gateway
+    image: kta6161/api-gateway:latest  
+    container_name: api-gateway
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USERNAME=guest
+      - RABBITMQ_PASSWORD=guest
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      account-service:
+        condition: service_started
+      notification-service:
+        condition: service_started
+      transaction-service:
+        condition: service_started          
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./api-gateway:/app 
+      - /app/node_modules  
+
+  notification-service:
+    build:
+      context: ./notification-service
+    image: kta6161/notification-service:latest  
+    container_name: notification-service
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USERNAME=guest
+      - RABBITMQ_PASSWORD=guest
+      - SMTP_HOST = ${SMTP_HOST}
+      - SMTP_PORT = ${SMTP_PORT}
+      - SMTP_USER = ${SMTP_USER}
+      - SMTP_PASS = ${SMTP_PASS}
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      transaction-service:
+        condition: service_started
+    ports:
+      - "50052:50052"    
+    volumes:
+      - ./notification-service:/app 
+      - /app/node_modules   
+
+  transaction-service:
+    build:
+      context: ./transaction-service
+    image: kta6161/transaction-service:latest  
+    container_name: transaction-service
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - API_GATEWAY_URL=${API_GATEWAY_URL}
+      - RABBITMQ_USERNAME=guest
+      - RABBITMQ_PASSWORD=guest
+      - TRANSACTION_SERVICE_DATABASE_URL = ${TRANSACTION_SERVICE_DATABASE_URL}
+      - API_GATEWAY_URL = ${API_GATEWAY_URL}
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      account-service:
+        condition: service_started
+    volumes:
+      - ./transaction-service:/app 
+      - /app/node_modules      
+      - ./transaction-service/prisma:/app/prisma
+    command: sh -c "npx prisma migrate dev && npm run dev"  
+    ports:
+      - "50053:50053"
+

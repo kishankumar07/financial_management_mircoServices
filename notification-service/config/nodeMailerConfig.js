@@ -18,7 +18,7 @@ export const transporter = nodemailer.createTransport({
        if (error) {
               console.error('SMTP Configuration Error:', error);
         } else {
-              console.log('SMTP Connected Successfully');
+              console.log('SMTP Connected Successfully at notification-service',success);
             }
       });
 

@@ -5,12 +5,12 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start-account-service":"npm --prefix account-service run dev",
-    "start-notification-service":"npm --prefix notification-service run dev",
-    "start-api-gateway":"npm --prefix api-gateway run dev",
-    "start-transaction-service":"npm --prefix transaction-service run dev",
-    "start-reporting-service":"npm --prefix reporting-service run dev",
-    "start":"concurrently \"npm run start-account-service\" \"npm run start-api-gateway\" \"npm run start-notification-service\" \"npm run start-transaction-service\" \"npm run start-reporting-service\" "
+    "start-account-service": "npm --prefix account-service run dev",
+    "start-notification-service": "npm --prefix notification-service run dev",
+    "start-api-gateway": "npm --prefix api-gateway run dev",
+    "start-transaction-service": "npm --prefix transaction-service run dev",
+    "start-reporting-service": "npm --prefix reporting-service run dev",
+    "start": "concurrently \"npm run start-account-service\" \"npm run start-api-gateway\" \"npm run start-notification-service\" \"npm run start-transaction-service\" \"npm run start-reporting-service\" "
   },
   "keywords": [],
   "author": "",
@@ -19,4 +19,3 @@
     "concurrently": "^9.1.0"
   }
 }
- 
