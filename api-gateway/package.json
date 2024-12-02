@@ -6,8 +6,9 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
+    "start-swagger-gen": "node swagger/index.js",
     "dev": "nodemon src/server.js",
-    "start":"node src/server.js"
+    "start": "node src/server.js"
   },
   "keywords": [],
   "author": "",
@@ -16,7 +17,9 @@
     "@grpc/grpc-js": "^1.12.2",
     "@grpc/proto-loader": "^0.7.13",
     "express": "^4.21.1",
-    "express-http-proxy": "^2.1.1"
+    "express-http-proxy": "^2.1.1",
+    "swagger-autogen": "^2.23.7",
+    "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
     "jest": "^29.7.0",

@@ -1,0 +1,16 @@
+{
+      "openapi": "3.0.0",
+      "info": {
+        "title": "Financial System Management_Microservices",
+        "version": "1.0.0",
+        "description": "Unified API documentation for microservices."
+      },
+      "servers": [
+        {
+          "url": "http://localhost:3000",
+          "description": "Development Server"
+        }
+      ],
+      "paths": {}
+}
+    

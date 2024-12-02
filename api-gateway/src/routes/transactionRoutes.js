@@ -42,6 +42,26 @@ router.post('/', (req, res) => {
 });
 
 //--------------------------------------------------------------------
+/**
+ * @ DESC    Get details of transaction by id [ id required in path params ] 
+ * 
+ *  POST     /transactions/:id
+ *  
+ *  Access   Private
+ */
+
+// List Transactions for an Account
+router.get('/:id', (req, res) => {
+  const { id } = req.params;
+  client.getTransaction({ id }, (error, response) => {
+    if (error) {
+      return res.status(404).json({ error: error.message });
+    }
+    res.status(200).json(response);
+  });
+});
+
+//--------------------------------------------------------------------
 
 /**
  * @ DESC    Get details of transaction by accountId [ accountId required in path params ] 

@@ -1,0 +1,294 @@
+{
+      "/accounts": {
+        "post": {
+      "summary": "Create a new user account",
+      "description": "Create a new user by providing the name and email. The email must be unique.",
+      "tags": ["Accounts"],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "example": "John Doe"
+                },
+                "email": {
+                  "type": "string",
+                  "example": "johndoe@example.com"
+                }
+              },
+              "required": ["name", "email"]
+            }
+          }
+        }
+      },
+      "responses": {
+        "201": {
+          "description": "Account created successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "example": "12345"
+                  },
+                  "message": {
+                    "type": "string",
+                    "example": "Account created successfully"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Validation error or missing fields",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "error": {
+                    "type": "string",
+                    "example": "Name and email are required"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Server error while creating an account",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "error": {
+                    "type": "string",
+                    "example": "Internal server error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/accounts/{id}": {
+    "get": {
+      "summary": "Fetch user account details",
+      "description": "Retrieve the account details of a user by providing the account ID as a path parameter.",
+      "tags": ["Accounts"],
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "description": "The unique identifier of the user account",
+          "schema": {
+            "type": "string",
+            "example": "12345"
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "User account details retrieved successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "example": "12345"
+                  },
+                  "name": {
+                    "type": "string",
+                    "example": "John Doe"
+                  },
+                  "email": {
+                    "type": "string",
+                    "example": "johndoe@example.com"
+                  },
+                  "balance": {
+                    "type": "number",
+                    "example": 100
+                  }
+                }
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Account not found",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "error": {
+                    "type": "string",
+                    "example": "Account not found"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Invalid or missing account ID",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "error": {
+                    "type": "string",
+                    "example": "Invalid account ID"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Server error while retrieving account details",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "error": {
+                    "type": "string",
+                    "example": "Something went wrong"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  
+    "/accounts/{id}/balance": {
+      "put": {
+        "summary": "Update account balance",
+        "description": "Update the balance of a user account by providing the account ID and new balance amount.",
+        "tags": ["Accounts"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The unique identifier of the user account",
+            "schema": {
+              "type": "string",
+              "example": "12345"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "The new balance amount for the account",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "amount": {
+                    "type": "number",
+                    "example": 1500.50
+                  }
+                },
+                "required": ["amount"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Balance updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "example": "12345"
+                    },
+                    "updated_balance": {
+                      "type": "number",
+                      "example": 1500.50
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Balance updated successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input or validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Invalid argument: amount cannot be negative"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Account not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Account not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error while updating balance",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Something went wrong"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+}
+    

@@ -103,3 +103,147 @@ Completion Steps
 - Prioritize security and monitoring for production readiness.
 - Validate each item on this checklist during or after implementation.
 - Continuously test and refine based on logs and feedback.
+
+
+
+
+
+
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Transaction Service API",
+    "version": "1.0.0",
+    "description": "API documentation for the Transaction Service."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Development Server"
+    }
+  ],
+  "paths": {
+    "/transactions/account/{accountId}": {
+      "get": {
+        "summary": "List transactions for an account",
+        "description": "Retrieves all transactions associated with the specified account ID.",
+        "tags": ["Transactions"],
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "path",
+            "required": true,
+            "description": "The unique identifier of the account whose transactions are to be retrieved.",
+            "schema": {
+              "type": "string",
+              "example": "a1b2c3d4"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of transactions retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "transactions": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "example": "t12345",
+                            "description": "The unique identifier of the transaction."
+                          },
+                          "accountId": {
+                            "type": "string",
+                            "example": "a1b2c3d4",
+                            "description": "The unique identifier of the account."
+                          },
+                          "type": {
+                            "type": "string",
+                            "enum": ["DEPOSIT", "WITHDRAWAL"],
+                            "example": "DEPOSIT",
+                            "description": "The type of transaction."
+                          },
+                          "amount": {
+                            "type": "number",
+                            "example": 100.5,
+                            "description": "The amount involved in the transaction."
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "example": "2024-01-01T12:00:00Z",
+                            "description": "Timestamp when the transaction was created."
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid or missing account ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Account ID is required"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No transactions found for the given account ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Account not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error while retrieving transactions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Error fetching transactions"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Transactions",
+      "description": "Endpoints related to transaction management"
+    }
+  ]
+}

@@ -1,13 +1,25 @@
 import express from 'express';
+import swaggerUi from 'swagger-ui-express';
+import path from 'path';
+import fs from 'fs'
 import accountRoutes from './routes/accountRoutes.js';
 import notificationRoutes from './routes/notificationRoutes.js';
 import transactionRoutes from './routes/transactionRoutes.js'
 import reportingRoutes from './routes/reportingRoutes.js'
+import {fileURLToPath} from 'node:url';
+
+const __filename = fileURLToPath(import.meta.url); 
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = 3000;
 
 app.use(express.json());
+
+// Swagger setup
+const swaggerFilePath = path.join(__dirname,'../swagger.json');
+const swaggerDocument = JSON.parse(fs.readFileSync(swaggerFilePath, 'utf8'));
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Routes
 app.use('/accounts', accountRoutes);
@@ -17,6 +29,7 @@ app.use('/reporting',reportingRoutes)
  
 app.listen(PORT, () => {
   console.log(`API Gateway is running on http://localhost:${PORT}`);
+  console.log(`Swagger documentation available at http://localhost:${PORT}/api-docs`);
 });
 
 

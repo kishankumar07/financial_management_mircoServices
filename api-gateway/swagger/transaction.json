@@ -1,0 +1,312 @@
+{
+     
+        "/transactions": {
+          "post": {
+            "summary": "Create a new transaction",
+            "description": "Creates a new transaction (deposit or withdrawal) for a specific account. The account ID, transaction type, and amount are required.",
+            "tags": ["Transactions"],
+            "requestBody": {
+              "required": true,
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "accountId": {
+                        "type": "string",
+                        "example": "a1b2c3d4",
+                        "description": "The unique identifier of the account."
+                      },
+                      "type": {
+                        "type": "string",
+                        "enum": ["DEPOSIT", "WITHDRAWAL"],
+                        "example": "DEPOSIT",
+                        "description": "The type of transaction: 'DEPOSIT' or 'WITHDRAWAL'."
+                      },
+                      "amount": {
+                        "type": "number",
+                        "example": 100.5,
+                        "description": "The amount for the transaction."
+                      }
+                    },
+                    "required": ["accountId", "type", "amount"]
+                  }
+                }
+              }
+            },
+            "responses": {
+              "201": {
+                "description": "Transaction created successfully",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "example": "t12345",
+                          "description": "The unique identifier of the transaction."
+                        },
+                        "message": {
+                          "type": "string",
+                          "example": "Transaction successfully created"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "400": {
+                "description": "Validation error or insufficient balance",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "type": "string",
+                          "example": "Insufficient balance for withdrawal"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "500": {
+                "description": "Server error while creating the transaction",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "type": "string",
+                          "example": "Failed to create transaction: Internal server error"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+   "/transactions/{id}": {
+    "get": {
+      "summary": "Fetch transaction details by transaction id",
+      "description": "Retrieve the transaction details of a user by providing the transaction ID as a path parameter.",
+      "tags": ["Transactions"],
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "description": "The unique identifier of the transaction",
+          "schema": {
+            "type": "string",
+            "example": "12345"
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Transaction details retrieved successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "example": "12345"
+                  },
+                  "accountId": {
+                    "type": "string",
+                    "example": "12345"
+                  },
+                  "type": {
+                    "type": "string",
+                    "example": "DEPOSIT"
+                  },
+                  "amount": {
+                    "type": "number",
+                    "example": 100
+                  },
+                  "createdAt": {
+                    "type": "string",
+                    "example": "4/9/1997"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Transaction not found",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "error": {
+                    "type": "string",
+                    "example": "Transaction not found"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Invalid or missing transaction ID",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "error": {
+                    "type": "string",
+                    "example": "Invalid transaction ID"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Server error while retrieving account details",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "error": {
+                    "type": "string",
+                    "example": "Something went wrong"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/transactions/account/{accountId}": {
+      "get": {
+        "summary": "List transactions for an account",
+        "description": "Retrieves all transactions associated with the specified account ID.",
+        "tags": ["Transactions"],
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "path",
+            "required": true,
+            "description": "The unique identifier of the account whose transactions are to be retrieved.",
+            "schema": {
+              "type": "string",
+              "example": "a1b2c3d4"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of transactions retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "transactions": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "example": "t12345",
+                            "description": "The unique identifier of the transaction."
+                          },
+                          "accountId": {
+                            "type": "string",
+                            "example": "a1b2c3d4",
+                            "description": "The unique identifier of the account."
+                          },
+                          "type": {
+                            "type": "string",
+                            "enum": ["DEPOSIT", "WITHDRAWAL"],
+                            "example": "DEPOSIT",
+                            "description": "The type of transaction."
+                          },
+                          "amount": {
+                            "type": "number",
+                            "example": 100.5,
+                            "description": "The amount involved in the transaction."
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "example": "2024-01-01T12:00:00Z",
+                            "description": "Timestamp when the transaction was created."
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid or missing account ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Account ID is required"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No transactions found for the given account ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Account not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error while retrieving transactions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Error fetching transactions"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+    
