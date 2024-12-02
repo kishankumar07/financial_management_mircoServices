@@ -34,7 +34,7 @@ services:
       - ./account-service:/app 
       - /app/node_modules       
       - ./account-service/prisma:/app/prisma
-    command: sh -c "npx prisma migrate dev && npm run dev"
+    command: sh -c "npx prisma migrate dev && npm run start"
     ports:
       - "50051:50051"
 
@@ -96,9 +96,9 @@ services:
     environment:
       - RABBITMQ_HOST=rabbitmq
       - RABBITMQ_PORT=5672
-      - API_GATEWAY_URL=${API_GATEWAY_URL}
       - RABBITMQ_USERNAME=guest
       - RABBITMQ_PASSWORD=guest
+      - API_GATEWAY_URL=${API_GATEWAY_URL}
       - TRANSACTION_SERVICE_DATABASE_URL=${TRANSACTION_SERVICE_DATABASE_URL}
     
     depends_on:
@@ -110,7 +110,30 @@ services:
       - ./transaction-service:/app 
       - /app/node_modules      
       - ./transaction-service/prisma:/app/prisma
-    command: sh -c "npx prisma migrate dev && npm run dev"  
+    command: sh -c "npx prisma migrate dev && npm run start"  
     ports:
       - "50053:50053"
+
+  reporting-service:
+    build:
+      context: ./reporting-service
+    image: kta6161/reporting-service:latest  
+    container_name: reporting-service
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USERNAME=guest
+      - RABBITMQ_PASSWORD=guest
+      - API_GATEWAY_URL=${API_GATEWAY_URL}
+      - TRANSACTION_SERVICE_URL=${TRANSACTION_SERVICE_URL}
+    
+    depends_on:
+      transaction-service:
+        condition: service_started
+    volumes:
+      - ./reporting-service:/app 
+      - /app/node_modules      
+    ports:
+      - "50054:50054"
+
 

@@ -44,6 +44,7 @@ jobs:
       ACCOUNT_SERVICE_DB_URL: ${{ secrets.ACCOUNT_SERVICE_DB_URL }}
       TRANSACTION_SERVICE_DATABASE_URL: ${{ secrets.TRANSACTION_SERVICE_DATABASE_URL }}
       API_GATEWAY_URL: ${{ secrets.API_GATEWAY_URL }}
+      TRANSACTION_SERVICE_URL: ${{ secrets.TRANSACTION_SERVICE_URL }}
 
     steps:
       - name: Checkout Repository

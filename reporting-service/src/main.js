@@ -6,7 +6,7 @@ import path from 'path'
 
 const __filename = fileURLToPath(import.meta.url); 
 const __dirname = path.dirname(__filename);
-const REPORTING_PROTO_PATH = path.join(__dirname,'../../proto/reporting.proto');
+const REPORTING_PROTO_PATH = path.join(__dirname,'../proto/reporting.proto');
 
 const packageDefinition = protoLoader.loadSync(REPORTING_PROTO_PATH);
 const reportingProto = grpc.loadPackageDefinition(packageDefinition).reporting;

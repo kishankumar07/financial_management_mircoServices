@@ -16,9 +16,7 @@
       "post": {
         "summary": "Create a new user account",
         "description": "Create a new user by providing the name and email. The email must be unique.",
-        "tags": [
-          "Accounts"
-        ],
+        "tags": ["Accounts"],
         "requestBody": {
           "required": true,
           "content": {
@@ -35,10 +33,7 @@
                     "example": "johndoe@example.com"
                   }
                 },
-                "required": [
-                  "name",
-                  "email"
-                ]
+                "required": ["name", "email"]
               }
             }
           }
@@ -103,9 +98,7 @@
       "get": {
         "summary": "Fetch user account details",
         "description": "Retrieve the account details of a user by providing the account ID as a path parameter.",
-        "tags": [
-          "Accounts"
-        ],
+        "tags": ["Accounts"],
         "parameters": [
           {
             "name": "id",
@@ -202,9 +195,7 @@
       "put": {
         "summary": "Update account balance",
         "description": "Update the balance of a user account by providing the account ID and new balance amount.",
-        "tags": [
-          "Accounts"
-        ],
+        "tags": ["Accounts"],
         "parameters": [
           {
             "name": "id",
@@ -230,9 +221,7 @@
                     "example": 1500.5
                   }
                 },
-                "required": [
-                  "amount"
-                ]
+                "required": ["amount"]
               }
             }
           }
@@ -317,9 +306,7 @@
       "post": {
         "summary": "Create a new transaction",
         "description": "Creates a new transaction (deposit or withdrawal) for a specific account. The account ID, transaction type, and amount are required.",
-        "tags": [
-          "Transactions"
-        ],
+        "tags": ["Transactions"],
         "requestBody": {
           "required": true,
           "content": {
@@ -334,10 +321,7 @@
                   },
                   "type": {
                     "type": "string",
-                    "enum": [
-                      "DEPOSIT",
-                      "WITHDRAWAL"
-                    ],
+                    "enum": ["DEPOSIT", "WITHDRAWAL"],
                     "example": "DEPOSIT",
                     "description": "The type of transaction: 'DEPOSIT' or 'WITHDRAWAL'."
                   },
@@ -347,11 +331,7 @@
                     "description": "The amount for the transaction."
                   }
                 },
-                "required": [
-                  "accountId",
-                  "type",
-                  "amount"
-                ]
+                "required": ["accountId", "type", "amount"]
               }
             }
           }
@@ -417,9 +397,7 @@
       "get": {
         "summary": "Fetch transaction details by transaction id",
         "description": "Retrieve the transaction details of a user by providing the transaction ID as a path parameter.",
-        "tags": [
-          "Transactions"
-        ],
+        "tags": ["Transactions"],
         "parameters": [
           {
             "name": "id",
@@ -520,9 +498,7 @@
       "get": {
         "summary": "List transactions for an account",
         "description": "Retrieves all transactions associated with the specified account ID.",
-        "tags": [
-          "Transactions"
-        ],
+        "tags": ["Transactions"],
         "parameters": [
           {
             "name": "accountId",
@@ -560,10 +536,7 @@
                           },
                           "type": {
                             "type": "string",
-                            "enum": [
-                              "DEPOSIT",
-                              "WITHDRAWAL"
-                            ],
+                            "enum": ["DEPOSIT", "WITHDRAWAL"],
                             "example": "DEPOSIT",
                             "description": "The type of transaction."
                           },
@@ -628,6 +601,218 @@
                     "error": {
                       "type": "string",
                       "example": "Error fetching transactions"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/reporting/transactions/{accountId}": {
+      "get": {
+        "summary": "Fetch user transactions details",
+        "description": "Retrieve the transactions details of a user by providing the account ID as a path parameter.",
+        "tags": ["Reports"],
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "path",
+            "required": true,
+            "description": "The unique identifier of the user account",
+            "schema": {
+              "type": "string",
+              "example": "12345"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User transaction details retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "transactions": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "example": "t12345",
+                            "description": "The unique identifier of the transaction."
+                          },
+                          "accountId": {
+                            "type": "string",
+                            "example": "a1b2c3d4",
+                            "description": "The unique identifier of the account."
+                          },
+                          "type": {
+                            "type": "string",
+                            "enum": ["DEPOSIT", "WITHDRAWAL"],
+                            "example": "DEPOSIT",
+                            "description": "The type of transaction."
+                          },
+                          "amount": {
+                            "type": "number",
+                            "example": 100.5,
+                            "description": "The amount involved in the transaction."
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "example": "2024-01-01T12:00:00Z",
+                            "description": "Timestamp when the transaction was created."
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid or missing account ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Invalid account ID"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Account not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Account not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error while retrieving account details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Something went wrong"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/reporting/summary/{accountId}": {
+      "get": {
+        "summary": "Fetch user transactions Summary like total deposits, withdrawals and current balance",
+        "description": "Retrieve the summary details of a user by providing the account ID as a path parameter.",
+        "tags": ["Reports"],
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "path",
+            "required": true,
+            "description": "The unique identifier of the user account",
+            "schema": {
+              "type": "string",
+              "example": "12345"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User transaction details retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "totalDeposits": {
+                      "type": "number",
+                      "example": "100000",
+                      "description": "The total deposits of a user overall"
+                    },
+                    "totalWithdrawals": {
+                      "type": "number",
+                      "example": "30000",
+                      "description": "The total withdrawals of a user"
+                    },
+                    "currentBalance": {
+                      "type": "number",
+                      "example": "70000",
+                      "description": "The total withdrawals of a user"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid or missing account ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Invalid account ID"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Account not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Account not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error while retrieving account details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Something went wrong"
                     }
                   }
                 }

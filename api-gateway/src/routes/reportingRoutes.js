@@ -31,7 +31,7 @@ const router = express.Router();
 //------------------------------------------------------------------------
 
 /**
- * @ DESC    Get all transactions of a customer [must provide accountId in path params] 
+ * @ DESC    Get all transactions report of a customer [must provide accountId in path params] 
  * 
  *  POST     /reporting/transactions/:accountId
  *  
@@ -52,7 +52,7 @@ router.get('/transactions/:accountId', (req, res) => {
 //------------------------------------------------------------------------
 
 /**
- * @ DESC    Get all transactions summary of a customer [must provide accountId in path params] 
+ * @ DESC    Get the transactions summary of a customer [must provide accountId in path params] 
  * 
  *  POST     /reporting/summary/:accountId
  *  

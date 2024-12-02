@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package transaction;
+
+service TransactionService {
+  rpc CreateTransaction(CreateTransactionRequest) returns (CreateTransactionResponse);
+  rpc GetTransaction(GetTransactionRequest) returns (Transaction);
+  rpc ListTransactions(ListTransactionsRequest) returns (ListTransactionsResponse);
+}
+
+message CreateTransactionRequest {
+  string accountId = 1;
+  string type = 2; // "DEPOSIT" or "WITHDRAWAL"
+  double amount = 3;
+}
+
+message CreateTransactionResponse {
+  string id = 1;
+  string message = 2;
+}
+
+message GetTransactionRequest {
+  string id = 1;
+}
+
+message ListTransactionsRequest {
+  string accountId = 1;
+}
+
+message ListTransactionsResponse {
+  repeated Transaction transactions = 1;
+}
+
+message Transaction {
+  string id = 1;
+  string accountId = 2;
+  string type = 3; // "DEPOSIT" or "WITHDRAWAL"
+  double amount = 4;
+  string createdAt = 5;
+}

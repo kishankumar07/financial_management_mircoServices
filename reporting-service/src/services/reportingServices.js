@@ -6,7 +6,7 @@ import path from 'node:path';
 const __filename = fileURLToPath(import.meta.url); 
 const __dirname = path.dirname(__filename); 
 
-const TRANSACTION_PROTO_PATH = path.join(__dirname,`../../../proto/transaction.proto`)
+const TRANSACTION_PROTO_PATH = path.join(__dirname,`../../proto/transaction.proto`)
 
 const transactionPackageDefinition = protoLoader.loadSync(TRANSACTION_PROTO_PATH);
 const transactionProto = grpc.loadPackageDefinition(transactionPackageDefinition).transaction;
@@ -17,6 +17,7 @@ const transactionClient = new transactionProto.TransactionService(
       process.env.TRANSACTION_SERVICE_URL || 'localhost:50053',
       grpc.credentials.createInsecure()
     );
+
 
     // Fetch all transactions for an account
       export const getTransactions = (call, callback) => {
@@ -39,7 +40,7 @@ const transactionClient = new transactionProto.TransactionService(
           });
         }
     
-        callback(null, response); // Forward the response from transaction-service
+        callback(null, response);
       });
     }; 
 
@@ -66,7 +67,7 @@ const transactionClient = new transactionProto.TransactionService(
     
         // Process transactions to calculate the summary
         const { transactions } = response;
-        console.log('the transactions are:',transactions)
+        console.log('the transactions got from transaction-services are:',transactions)
         const totalDeposits = transactions
           .filter((t) => t.type === 'DEPOSIT')
           .reduce((sum, t) => sum + t.amount, 0);

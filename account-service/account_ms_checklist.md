@@ -108,82 +108,49 @@ Completion Steps
 
 
 
-
-{
-  "openapi": "3.0.0",
-  "info": {
-    "title": "Transaction Service API",
-    "version": "1.0.0",
-    "description": "API documentation for the Transaction Service."
-  },
-  "servers": [
-    {
-      "url": "http://localhost:3000",
-      "description": "Development Server"
-    }
-  ],
-  "paths": {
-    "/transactions/account/{accountId}": {
+ "/reporting/summary/{accountId}": {
       "get": {
-        "summary": "List transactions for an account",
-        "description": "Retrieves all transactions associated with the specified account ID.",
-        "tags": ["Transactions"],
+        "summary": "Fetch user transactions Summary like total deposits, withdrawals and current balance",
+        "description": "Retrieve the summary details of a user by providing the account ID as a path parameter.",
+        "tags": [
+          "Reports"
+        ],
         "parameters": [
           {
             "name": "accountId",
             "in": "path",
             "required": true,
-            "description": "The unique identifier of the account whose transactions are to be retrieved.",
+            "description": "The unique identifier of the user account",
             "schema": {
               "type": "string",
-              "example": "a1b2c3d4"
+              "example": "12345"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "List of transactions retrieved successfully",
+            "description": "User transaction details retrieved successfully",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "transactions": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "id": {
-                            "type": "string",
-                            "example": "t12345",
-                            "description": "The unique identifier of the transaction."
-                          },
-                          "accountId": {
-                            "type": "string",
-                            "example": "a1b2c3d4",
-                            "description": "The unique identifier of the account."
-                          },
-                          "type": {
-                            "type": "string",
-                            "enum": ["DEPOSIT", "WITHDRAWAL"],
-                            "example": "DEPOSIT",
-                            "description": "The type of transaction."
-                          },
-                          "amount": {
+                          "totalDeposits": {
                             "type": "number",
-                            "example": 100.5,
-                            "description": "The amount involved in the transaction."
+                            "example": "100000",
+                            "description": "The total deposits of a user overall"
                           },
-                          "createdAt": {
-                            "type": "string",
-                            "format": "date-time",
-                            "example": "2024-01-01T12:00:00Z",
-                            "description": "Timestamp when the transaction was created."
+                          "totalWithdrawals": {
+                            "type": "number",
+                            "example": "30000",
+                            "description": "The total withdrawals of a user"
+                          },
+                          "currentBalance": {
+                            "type": "number",
+                            "example": "70000",
+                            "description": "The total withdrawals of a user"
                           }
                         }
-                      }
-                    }
-                  }
                 }
               }
             }
@@ -197,7 +164,7 @@ Completion Steps
                   "properties": {
                     "error": {
                       "type": "string",
-                      "example": "Account ID is required"
+                      "example": "Invalid account ID"
                     }
                   }
                 }
@@ -205,7 +172,7 @@ Completion Steps
             }
           },
           "404": {
-            "description": "No transactions found for the given account ID",
+            "description": "Account not found",
             "content": {
               "application/json": {
                 "schema": {
@@ -221,7 +188,7 @@ Completion Steps
             }
           },
           "500": {
-            "description": "Internal server error while retrieving transactions",
+            "description": "Server error while retrieving account details",
             "content": {
               "application/json": {
                 "schema": {
@@ -229,7 +196,7 @@ Completion Steps
                   "properties": {
                     "error": {
                       "type": "string",
-                      "example": "Error fetching transactions"
+                      "example": "Something went wrong"
                     }
                   }
                 }
@@ -238,12 +205,4 @@ Completion Steps
           }
         }
       }
-    }
-  },
-  "tags": [
-    {
-      "name": "Transactions",
-      "description": "Endpoints related to transaction management"
-    }
-  ]
-}
+    },
